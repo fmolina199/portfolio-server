@@ -4,13 +4,14 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Album {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -23,9 +24,9 @@ public class Album {
     private User user;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "album", cascade = CascadeType.ALL)
-    private List<Photo> photoList;
+    private List<AlbumPhoto> photos = new ArrayList<>();
 
-    public Long getId() {
+    Long getId() {
         return id;
     }
 
@@ -65,11 +66,7 @@ public class Album {
         this.description = description;
     }
 
-    public List<Photo> getPhotoList() {
-        return photoList;
-    }
-
-    public void setPhotoList(List<Photo> photoList) {
-        this.photoList = photoList;
+    public List<AlbumPhoto> getPhotos() {
+        return photos;
     }
 }

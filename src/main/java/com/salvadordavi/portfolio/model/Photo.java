@@ -1,25 +1,22 @@
 package com.salvadordavi.portfolio.model;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Photo {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String url;
     private String name;
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "album_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Album album;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "photo", cascade = CascadeType.ALL)
+    private List<AlbumPhoto> albums = new ArrayList<>();
 
-    public Long getId() {
+    Long getId() {
         return id;
     }
 
@@ -51,11 +48,7 @@ public class Photo {
         this.description = description;
     }
 
-    public Album getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(Album album) {
-        this.album = album;
+    public List<AlbumPhoto> getAlbums() {
+        return albums;
     }
 }

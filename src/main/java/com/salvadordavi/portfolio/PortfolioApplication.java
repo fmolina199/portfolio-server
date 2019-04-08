@@ -1,8 +1,10 @@
 package com.salvadordavi.portfolio;
 
 import com.salvadordavi.portfolio.model.Album;
+import com.salvadordavi.portfolio.model.AlbumPhoto;
 import com.salvadordavi.portfolio.model.Photo;
 import com.salvadordavi.portfolio.model.User;
+import com.salvadordavi.portfolio.repository.AlbumPhotoRepository;
 import com.salvadordavi.portfolio.repository.AlbumRepository;
 import com.salvadordavi.portfolio.repository.PhotoRepository;
 import com.salvadordavi.portfolio.repository.UserRepository;
@@ -14,6 +16,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @SpringBootApplication
 public class PortfolioApplication implements CommandLineRunner {
@@ -26,6 +29,9 @@ public class PortfolioApplication implements CommandLineRunner {
 
 	@Autowired
 	private PhotoRepository photoRepository;
+
+	@Autowired
+	private AlbumPhotoRepository albumPhotoRepository;
 
 	private static Logger LOG = LoggerFactory
 			.getLogger(PortfolioApplication.class);
@@ -61,20 +67,21 @@ public class PortfolioApplication implements CommandLineRunner {
 		albumRepository.save(album);
 
 		Photo photo = new Photo();
-		photo.setAlbum(album);
 		photo.setDescription("Description desc");
 		photo.setName("Photo Name 1");
 		photo.setUrl("URL 1");
 		photoRepository.save(photo);
 
+		AlbumPhoto albumPhoto = new AlbumPhoto();
+		albumPhoto.setPhoto(photo);
+		albumPhoto.setAlbum(album);
+		albumPhotoRepository.save(albumPhoto);
 
-		Optional<User> searchedUser = userRepository.findById(Long.valueOf(1));
+		Optional<User> searchedUser = userRepository.findById(1L);
 		searchedUser.ifPresent(user1 -> user1.getAlbumList().forEach(album1 -> {
 			LOG.info(album1.getName());
-			album1.getPhotoList().forEach(photo1 -> {
-				LOG.info("\t-" + photo1.getName());
-			});
+			album1.getPhotos().forEach(photo1 -> LOG.info("\t-" + photo1.getPhoto().getName()));
 		}));
-	}
 
+	}
 }
